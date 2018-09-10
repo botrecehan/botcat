@@ -20,21 +20,11 @@ NC='\e[0m'
 
 printf "${ijo}
 
-			 ██████╗ ██╗ ██╗███████╗███████╗
+			 █████te ${biru}
 
-			██╔════╝ ██║ ██║╚══███╔╝╚══███╔╝
+			 Necat
 
-			██║ ███╗██║ ██║ ███╔╝ ███╔╝ 
-
-			██║ ██║██║ ██║ ███╔╝ ███╔╝ 
-
-			╚██████╔╝╚██████╔╝███████╗███████╗
-
-			 ╚═════╝ ╚═════╝ ╚══════╝╚══════╝ ${biru}
-
-			 Newscat APPS BOT
-
-				 Code By : Guzz
+				 9uzz
 
 "
 
@@ -43,7 +33,7 @@ printf "${kuning}	______________________________________________________________
 rm award.tmp aid.txt info.tmp 2> /dev/null
 
 token='dab06493922cf5af13f5dbbed8b4d3d8'
-printf "${kuning}[!]${NC} Checking Token..."
+printf "${kuning}[!]${NC} Checing Token..."
 
 checktoken=$(curl -s -d "token=$token" 'http://www.newscat.com/api/user/info' -o "info.tmp")
 
