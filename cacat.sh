@@ -1,8 +1,4 @@
- kadalsinus / NewscatBOT
-
-Code Pull requests 0 Projects 0 Wiki Pulse
-
-BOT.sh
+ 
 
 #!/bin/bash
 
@@ -46,8 +42,7 @@ printf "${kuning}	______________________________________________________________
 
 rm award.tmp aid.txt info.tmp 2> /dev/null
 
-printf "${kuning}[!]${NC} Insert Your Newscat Token: "; read token
-
+token='dab06493922cf5af13f5dbbed8b4d3d8'
 printf "${kuning}[!]${NC} Checking Token..."
 
 checktoken=$(curl -s -d "token=$token" 'http://www.newscat.com/api/user/info' -o "info.tmp")
