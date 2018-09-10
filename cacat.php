@@ -1,6 +1,144 @@
-<?php
-date_default_timezone_set('Asia/Jakarta');require_once("sdata-modules.php");/** *
-@Author: taek* @Date: 2018-08-27 09:33:26 * @Last Modified by: tai* @Last Modified time: 2018-08-27 09:33:26*/##############################################################################################################$config['Token'] 		= '3551230xxxxxxx';$config['IMEI'] 		= 'ACGmNhoexxxxxx';$config['DeviceId'] 	= '35a7oDTxxxxxxx';$config['MobileModel'] 	= 'abdacad4xxxxxx4';$config['boundary'] 	= '12988158bxxxxxx';$config['username'] 	= 'a28a65fbbxxxxxx';$config['UUID'] 		= 'a28a65fbbxxxxxx';##############################################################################################################for ($x=0; $x <1; $x++) { 	$url 	= array(); 	for ($aid=0; $aid <30; $aid++) { 		for ($aid=0; $aid <20; $aid++) { 			$url[] = array(				'url' 	=> 'http://www.newscat.com/page/news?aid='.$aid.'&aid='.$aid,				'note' 	=> 'optional', 			);		}		$ambilBerita = $sdata->sdata($url); unset($url);unset($header);		foreach ($ambilBerita as $key => $value) {			$jdata = json_decode($value[respons],true);			foreach ($jdata[data][data] as $key => $datanews) {				$news[] = $datanews[aid];			}		}		$news = array_unique($news);		echo "[+] Mengambil data news (AID : ".$aid.") ==> ".count(array_unique($news))."\r\n";	}	while (TRUE) {		$timeIn60Minutes = time() + 60*60;		$rnd 	= array_rand($news); 		$id 	= $news[$rnd];		$url[] = array(			'url' 	=> 'http://www.neswcat.com/page/news?aid=',			'note' 	=> $rnd, 		);		$header[] = array(			'post' => 'OSVersion=8.0.0&android_channel=google&UUID='.$config['UUID'].'&content_id='.$id.'&content_type=1&Token='.$config['Token'].'&device_brand=samsung&device_ip=114.124.239.'.rand(0,255).'&device_version=SM-A730F&dtu=001&lat=&lon=&network=wifi&pack_channel=google&time='.$timeIn30Minutes.'&IMEI='.$config['IMEI'].'&DeviceId='.$config['DeviceId'].'&MobileModel='.$config['MobileModel'].'&username='.$config['username'].'&version=10047&versionName=1.4.7&boundary='.$config['boundary'], 		);		$respons = $sdata->sdata($url , $header); 		unset($url);unset($header);		foreach ($respons as $key => $value) {			$rjson = json_decode($value[respons],true);			echo "[+][".$aid." (Live : ".count($news).")] Message : ".$rjson['message']." | Rpc : ".$rjson['data']['amount']." | Read Second : ".$rjson['data']['current_read_second']."\r\n";			if($rjson[code] == '-20003'
-|| $rjson['data']['current_read_second'] == '330' || $rjson['data']['amount'] == 0){
-unset($news[$value[data][note]]);			}		}		if(count($news) == 0){			sleep(120);			break;		}		sleep(5);	}	$x++;
-?>
+ kadalsinus / NewscatBOT
+
+Code Pull requests 0 Projects 0 Wiki Pulse
+
+BOT.sh
+
+#!/bin/bash
+
+clear
+
+#Color list
+
+merah='\e[31m'
+
+ijo='\e[1;32m'
+
+kuning='\e[1;33m'
+
+biru='\e[1;34m'
+
+NC='\e[0m'
+
+#intro
+
+printf "${ijo}
+
+			 ██████╗ ██╗ ██╗███████╗███████╗
+
+			██╔════╝ ██║ ██║╚══███╔╝╚══███╔╝
+
+			██║ ███╗██║ ██║ ███╔╝ ███╔╝ 
+
+			██║ ██║██║ ██║ ███╔╝ ███╔╝ 
+
+			╚██████╔╝╚██████╔╝███████╗███████╗
+
+			 ╚═════╝ ╚═════╝ ╚══════╝╚══════╝ ${biru}
+
+			 Newscat APPS BOT
+
+				 Code By : Guzz
+
+"
+
+printf "${kuning}	_________________________________________________________________${NC}\n\n"
+
+rm award.tmp aid.txt info.tmp 2> /dev/null
+
+printf "${kuning}[!]${NC} Insert Your Newscat Token: "; read token
+
+printf "${kuning}[!]${NC} Checking Token..."
+
+checktoken=$(curl -s -d "token=$token" 'http://www.newscat.com/api/user/info' -o "info.tmp")
+
+getok=$(cat info.tmp | grep -Po '(?<=message":")[^"]*')
+
+getid=$(cat info.tmp | grep -Po '(?<=id":")[^"]*')
+
+gold=$(cat info.tmp | grep -Po '(?<="gold":)[^,]*')
+
+if [[ $getok == "OK" ]]
+
+		then
+
+			printf "${ijo}Done${NC}\n"
+
+			printf "${ijo}[!]${NC} Token : OK\n"
+
+			printf "${ijo}[!]${NC} User ID : $getid\n"
+
+			printf "${ijo}[!]${NC} Current Gold : $gold\n"
+
+		else
+
+			printf "${merah}Failed${NC}\n"
+
+			printf "${merah}[!]${NC} Token : Error\n"
+
+				exit 0
+
+fi
+
+rm info.tmp 2> /dev/null
+
+printf "${kuning}[!]${NC} Getting News ID.."
+
+pages=$(shuf -i 1-5604 -n 1)
+
+getnews=$(curl -s "http://www.newscat.com/api/article/list?page=$pages" -m 60 | grep -Po '(?<="aid":")[^"]*' > aid.txt )
+
+getnewsok=$(cat aid.txt | sed -n 1p)
+
+	if [[ $getnewsok == '' ]]
+
+		then
+
+			printf "${merah}Failed${NC}\n"
+
+			exit
+
+		else
+
+		printf "${ijo}Done${NC}\n"
+
+	fi
+
+printf "${kuning}[!]${NC} Starting Bot..\n"
+
+botstart(){
+
+rm award.tmp 2> /dev/null
+
+bot=$(curl -s -X POST -d "token=$token&aid=$aid" 'http://www.newscat.com/api/article/award' -o 'award.tmp')
+
+getmessage=$(cat award.tmp | grep -Po '(?<=message":")[^"]*')
+
+getgold=$(cat award.tmp | grep -Po '(?<=gold":")[^"]*')
+
+getreward=$(cat award.tmp | grep -Po '(?<=award":)[^,]*')
+
+if [[ $getmessage == 'OK' ]]
+
+	then
+
+		printf "${ijo}[!]${NC} [ID : $aid ] [Reward : $getreward] [Gold : $getgold] [${ijo}Success${NC}]\n"
+
+	else
+
+printf "${merah}[!]${NC} [ID : $aid ] [Reward : $getreward] [Reward : 0] [${merah}Failed${NC}]\n"
+
+fi
+
+}
+
+for aid in $(cat aid.txt)
+
+do
+
+botstart
+
+sleep 3
+
+done
+
